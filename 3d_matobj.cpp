@@ -12,11 +12,12 @@ void matrix::load_pgn_model()
     ifstream objFile;
     this->clear_mat();
     string inputFile;
-    cout << ">> Enter obj File : ";
+    cout << ">> Enter any obj File (e.g. Cessna.obj) : ";
     cin >> inputFile;
     objFile.open(inputFile);
     cout << "[*] Reading file" << endl;
     int pt_no = 1;
+    float max_x = 0, min_x = 0, max_y = 0, min_y = 0, max_z = 0, min_z = 0;
     hPgnCount = 0;
     poly_space = 1;
     if (objFile)
@@ -47,7 +48,7 @@ void matrix::load_pgn_model()
                     }
                     pt_no = pt_no * 2;
                 }
-                float x, y, z, d;
+                float x, y, z;
                 while (iSStream.peek() == ' ')
                     iSStream.ignore();
                 iSStream >> x;
@@ -58,12 +59,32 @@ void matrix::load_pgn_model()
                     iSStream.ignore();
                 iSStream >> z;
 
+                if (point_num == 0)
+                {
+                    max_x = x;
+                    min_x = x;
+                    max_y = y;
+                    min_y = y;
+                    max_z = z;
+                    min_z = z;
+                }
+
                 i_point[point_num].x = x;
                 i_point[point_num].y = y;
                 i_point[point_num].z = z;
-                d = sqrt( x*x + y*y + z*z );
-                if (7 * d > eye_z)
-                    eye_z = 7 * d;
+                if (max_x < x)
+                    max_x = x;
+                if (min_x > x)
+                    min_x = x;
+                if (max_y < y)
+                    max_y = y;
+                if (min_y > y)
+                    min_y = y;
+                if (max_z < z)
+                    max_z = z;
+                if (min_z > z)
+                    min_z = z;
+                    
                 point_num = point_num + 1;
             }
             else if (objElm == "f")
@@ -115,6 +136,19 @@ void matrix::load_pgn_model()
         }
         r_point = new point_3d[point_num];
         screen_pt = new point_2d[point_num];
+        float avg_x = (min_x + max_x) * 0.5;
+        float avg_y = (min_y + max_y) * 0.5;
+        float avg_z = (min_z + max_z) * 0.5;
+        for(int i = 0; i < point_num; i++)
+        {
+            i_point[i].x = i_point[i].x - avg_x;
+            i_point[i].y = i_point[i].y - avg_y;
+            i_point[i].z = i_point[i].z - avg_z;
+        }
+        avg_x = (min_x - max_x) * 0.5;
+        avg_y = (min_y - max_y) * 0.5;
+        avg_z = (min_z - max_z) * 0.5;
+        eye_z = 7 * sqrt( avg_x * avg_x + avg_y * avg_y + avg_z * avg_z );
     }
     cout << "... [*] Read Complete" << endl;
     cout << "[*] Vertex Count : " << point_num << endl;
