@@ -49,14 +49,8 @@ void matrix::load_pgn_model()
                     pt_no = pt_no * 2;
                 }
                 float x, y, z;
-                while (iSStream.peek() == ' ')
-                    iSStream.ignore();
                 iSStream >> x;
-                while (iSStream.peek() == ' ')
-                    iSStream.ignore();
                 iSStream >> y;
-                while (iSStream.peek() == ' ')
-                    iSStream.ignore();
                 iSStream >> z;
 
                 if (point_num == 0)
@@ -148,7 +142,7 @@ void matrix::load_pgn_model()
         avg_x = (min_x - max_x) * 0.5;
         avg_y = (min_y - max_y) * 0.5;
         avg_z = (min_z - max_z) * 0.5;
-        eye_z = 7 * sqrt( avg_x * avg_x + avg_y * avg_y + avg_z * avg_z );
+        eye_z = 5 * sqrt( avg_x * avg_x + avg_y * avg_y + avg_z * avg_z );
     }
     cout << "... [*] Read Complete" << endl;
     cout << "[*] Vertex Count : " << point_num << endl;
