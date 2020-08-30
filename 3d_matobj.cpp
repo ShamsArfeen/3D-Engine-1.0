@@ -26,9 +26,8 @@ void matrix::load_pgn_model()
         i_polygon = new polygon[1];
         cout << "... [*] File Found" << endl;
         string iData, objElm;
-        while (!objFile.eof())
+        while (getline(objFile, iData))
         {
-            getline(objFile, iData);
             istringstream iSStream(iData);
 
             iSStream >> objElm;
